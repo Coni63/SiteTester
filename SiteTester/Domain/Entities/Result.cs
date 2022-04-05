@@ -20,7 +20,6 @@ namespace SiteTester.Domain.Entities
 
         public Result()
         {
-            //Site = new Site(1, string.Empty);
             TestedUrl = string.Empty;
             TestDate = DateTime.UtcNow;
             StatusCode = String.Empty;
@@ -29,8 +28,15 @@ namespace SiteTester.Domain.Entities
 
         public Result(Site site, string testedUrl, string statusCode)
         {
-            //Site = site;
             TestedUrl = testedUrl;
+            TestDate = DateTime.UtcNow;
+            StatusCode = statusCode;
+            SiteForeignKey = site.Id;
+        }
+
+        public Result(Site site, Uri testedUrl, string statusCode)
+        {
+            TestedUrl = testedUrl.ToString();
             TestDate = DateTime.UtcNow;
             StatusCode = statusCode;
             SiteForeignKey = site.Id;

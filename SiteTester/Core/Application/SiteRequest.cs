@@ -11,12 +11,17 @@ namespace SiteTester.Core.Application
     {
         public static string callUrl(string url)
         {
+            return callUrl(new Uri(url));
+        }
+
+        public static string callUrl(Uri uri)
+        {
             try
             {
                 HttpClient client = new HttpClient();
                 HttpRequestMessage request = new HttpRequestMessage()
                 {
-                    RequestUri = new Uri(url),
+                    RequestUri = uri,
                     Method = HttpMethod.Head,
                 };
                 Task<HttpResponseMessage> task = client.SendAsync(request);
@@ -40,6 +45,28 @@ namespace SiteTester.Core.Application
             {
                 return "Other Exception";
             }
+        }
+
+        public static List<Uri> sanitizeUrl(string url)
+        {
+            url = url.ToLower().Trim();
+
+            List<Uri> urlToTest = new List<Uri>();
+            if (Uri.CheckHostName(url) == UriHostNameType.Unknown){
+                return urlToTest;  // return empty list as there is no valid host name
+            }
+
+            Uri address = new Uri(url);
+            if (!Uri.CheckSchemeName(address.Scheme))
+            {
+                urlToTest.Add(new UriBuilder(Uri.UriSchemeHttp, url).Uri);
+                urlToTest.Add(new UriBuilder(Uri.UriSchemeHttps, url).Uri);
+            }
+            else
+            {
+                urlToTest.Add(address);
+            }
+            return urlToTest;
         }
     }
 }

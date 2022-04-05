@@ -69,9 +69,11 @@ namespace SiteTester.Core.Application
             while (!_inputQueue.IsEmpty)
             {
                 _inputQueue.TryDequeue(out siteToTest);
-                url = siteToTest.BaseUrl;
-                statusCode = SiteRequest.callUrl(url);
-                _outputQueue.Enqueue(new Result(siteToTest, url, statusCode));
+                foreach(Uri uri in SiteRequest.sanitizeUrl(siteToTest.BaseUrl))
+                {
+                    statusCode = SiteRequest.callUrl(uri);
+                    _outputQueue.Enqueue(new Result(siteToTest, uri, statusCode));
+                }
             }
         }
 
